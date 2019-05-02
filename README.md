@@ -1,4 +1,4 @@
-# reader
+# moneymachine
 
 Processing Pitt's annual financial disclosure reports.
 
