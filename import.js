@@ -32,12 +32,11 @@ db.serialize(() => {
         splitText[0] = splitFirstRow.slice(2, splitFirstRow.length).join("\n");
 
         for(var i = 0; i < splitText.length; i += 3) {
-          if (splitText[i].includes('Total for')) {
-            var originalSplitText = splitText[i].split("\n");
-            splitText[i] = originalSplitText.splice(1, originalSplitText.length).join("\n");
-          }
+          var vendorInformation = splitText[i].split("\n");
 
-          const vendorInformation = splitText[i].split("\n");
+          if (splitText[i].includes('Total for')) {
+            vendorInformation = vendorInformation.splice(1, vendorInformation.length);
+          }
 
           if (purchaserDepartments.includes(vendorInformation[0])) {
             purchaserDepartment = vendorInformation.shift();
