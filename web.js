@@ -16,19 +16,29 @@ db.close();
 app.set('views', './views');
 app.set('view engine', 'ejs');
 app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); }
+const filters = app.locals.filters = [
+  { filterName: 'purchaserDepartments', filterColumn: 'purchaser_department' },
+  { filterName: 'years', filterColumn: 'year' }
+];
 
 app.get('/', (req, res) => {
   var applicableTransactions = transactions;
-  if (req.query.purchaserDepartments) {
-    var pds = req.query.purchaserDepartments;
-    if (!Array.isArray(pds)) {
-      pds = [pds];
-    }
+  filters.forEach(({ filterName, filterColumn }) => {
+    if (req.query[filterName]) {
+      var selectValue = req.query[filterName];
+      if (!Array.isArray(selectValue)) {
+        selectValue = [selectValue];
+      }
 
-    applicableTransactions = applicableTransactions.filter((t) => {
-      return pds.includes(t.purchaser_department);
-    });
-  }
+      if (filterName === 'years') {
+        selectValue = selectValue.map((sv) => { return Number(sv); });
+      }
+
+      applicableTransactions = applicableTransactions.filter((t) => {
+        return selectValue.includes(t[filterColumn]);
+      });
+    }
+  });
 
   res.render('index', { transactions: applicableTransactions, purchaserDepartments });
 });
