@@ -18,19 +18,21 @@ app.set('view engine', 'ejs');
 app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); }
 const filters = app.locals.filters = [
   { filterName: 'purchaserDepartments', filterColumn: 'purchaser_department' },
+  { filterName: 'vendor_numbers', filterColumn: 'vendor_number' },
   { filterName: 'years', filterColumn: 'year' }
 ];
 
-app.get('/', (req, res) => {
+const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
   var applicableTransactions = transactions;
-  filters.forEach(({ filterName, filterColumn }) => {
-    if (req.query[filterName]) {
-      var selectValue = req.query[filterName];
+  filters.filter(({ filterName }) => { return !queryParametersToIgnore.includes(filterName); })
+  .forEach(({ filterName, filterColumn }) => {
+    if (query[filterName]) {
+      var selectValue = query[filterName];
       if (!Array.isArray(selectValue)) {
         selectValue = [selectValue];
       }
 
-      if (filterName === 'years') {
+      if (filterName === 'years' || filterName === 'vendor_numbers') {
         selectValue = selectValue.map((sv) => { return Number(sv); });
       }
 
@@ -40,7 +42,27 @@ app.get('/', (req, res) => {
     }
   });
 
-  res.render('index', { transactions: applicableTransactions, purchaserDepartments });
+  return applicableTransactions;
+};
+
+app.get('/', (req, res) => {
+  const vendorsByNumber = getApplicableTransactions(req.query, ['vendor_numbers'])
+  .map((t) => {
+    return { name: t.vendor_name, number: t.vendor_number, year: t.year };
+  })
+  .reduce((rv, x) => {
+    (rv[x.number] = rv[x.number] || []).push(x);
+    return rv;
+  }, {});
+  const vendors = Object.keys(vendorsByNumber).map((vendorNumber) => {
+    return vendorsByNumber[vendorNumber].sort((a, b) => { return a.year - b.year })[0];
+  });
+
+  res.render('index', {
+    transactions: getApplicableTransactions(req.query),
+    purchaserDepartments,
+    vendors
+  });
 });
 
 app.listen(3000);

@@ -1,8 +1,8 @@
 {
   "dependencies": {
+    "csv-parse": "^4.4.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "pdf-parse": "^1.1.1",
     "sqlite3": "https://github.com/mapbox/node-sqlite3"
   }
 }

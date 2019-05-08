@@ -1,4 +1,5 @@
 node_modules/
+*.csv
 *.pdf
 *.DS_Store
 *.sqlite3
