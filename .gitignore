@@ -1,5 +1,3 @@
 node_modules/
-*.csv
-*.pdf
+data/
 *.DS_Store
-*.sqlite3
