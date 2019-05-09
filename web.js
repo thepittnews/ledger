@@ -2,16 +2,30 @@ const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('db.sqlite3');
 const express = require('express');
 const app = express();
-const { purchaserDepartments } = require('./common');
+const { dataColumns, purchaserDepartments } = require('./common');
+
+const { readFileSync } = require('fs');
+const parse = require('util').promisify(require('csv-parse'));
 
 var transactions = [];
-db.serialize(() => {
-  db.all('SELECT * from ledger_transaction', (err, rows) => {
-    if (err) throw err;
-    transactions = rows;
-  });
+const data = readFileSync('db.csv');
+parse(data).then((parsedTransactions) => {
+  parsedTransactions.shift();
+
+  for(const data of parsedTransactions) {
+    var obj = {};
+    for(var i = 0; i < data.length; i++) {
+      const column = dataColumns[i];
+      if (['year', 'amount', 'vendor_number'].includes(column)) {
+        obj[column] = Number(data[i]);
+      } else {
+        obj[column] = data[i];
+      }
+    }
+
+    transactions.push(obj);
+  }
 });
-db.close();
 
 app.set('views', './views');
 app.set('view engine', 'ejs');
@@ -37,7 +51,12 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
       }
 
       applicableTransactions = applicableTransactions.filter((t) => {
-        return selectValue.includes(t[column]);
+        var transactionValue = t[column];
+        if (name === 'years' || name === 'vendor_numbers') {
+          transactionValue = Number(transactionValue);
+        }
+
+        return selectValue.includes(transactionValue);
       });
     }
   });
