@@ -114,6 +114,7 @@ const purchaseTypes = {
 };
 
 module.exports = {
+  dataColumns: ['year', 'amount', 'vendor_number', 'vendor_name', 'vendor_address', 'purchaser_department', 'type'],
   purchaserDepartments,
   purchaserDepartmentAliases,
   purchaseTypes
