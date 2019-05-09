@@ -120,11 +120,9 @@
             <div class="form-group">
               <label>Year</label>
               <select id="years-select" multiple>
-                <option value="2014">2014</option>
-                <option value="2015">2015</option>
-                <option value="2016">2016</option>
-                <option value="2017">2017</option>
-                <option value="2018">2018</option>
+                <% for (const dataYear of dataYears) { %>
+                  <option value="<%= dataYear %>"><%= dataYear %></option>
+                <% } %>
               </select>
             </div>
           </div>

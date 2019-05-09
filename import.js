@@ -1,14 +1,19 @@
 const { readFileSync, writeFileSync } = require('fs');
 const parse = require('util').promisify(require('csv-parse'));
 
-const { dataColumns, purchaserDepartments, purchaserDepartmentAliases, purchaseTypes } = require('./common');
-const dataYears = [2014, 2016, 2017, 2018];
+const {
+  dataColumns,
+  dataYears,
+  purchaserDepartments,
+  purchaserDepartmentAliases,
+  purchaseTypes
+} = require('./common');
+
 var processedData = [];
 processedData.push(dataColumns);
 
 dataYears.forEach((dataYear, i) => {
-  let data = readFileSync(`FY${dataYear.toString().slice(-2)}_contracts.csv`);
-  parse(data).then((transactions) => {
+  parse(readFileSync(`data/FY${dataYear.toString().slice(-2)}_contracts.csv`)).then((transactions) => {
     // Remove headers and footers
     transactions.shift();
     if ([2014, 2017, 2018].includes(dataYear)) {
@@ -48,7 +53,7 @@ dataYears.forEach((dataYear, i) => {
       ]);
 
       if (i2 === transactions.length - 1 && i === dataYears.length - 1) {
-        writeFileSync('db.csv', processedData.map((pd) => { return pd.join(','); }).join("\n"));
+        writeFileSync('data/db.csv', processedData.map((pd) => { return pd.join(','); }).join("\n"));
       }
     });
   });
