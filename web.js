@@ -75,9 +75,17 @@ app.get('/', (req, res) => {
     return vendorsByNumber[vendorNumber].sort((a, b) => { return a.year - b.year })[0];
   });
 
+  var applicableTransactions = getApplicableTransactions(req.query);
+  var displayWelcome = false;
+  if (applicableTransactions.length === 30266) {
+    applicableTransactions = [];
+    displayWelcome = true;
+  }
+
   res.render('index', {
     dataYears,
-    transactions: getApplicableTransactions(req.query),
+    displayWelcome,
+    transactions: applicableTransactions,
     purchaserDepartments,
     vendors
   });
