@@ -12,19 +12,16 @@
     const filters = <%- JSON.stringify(filters) %>;
 
     $(() => {
-      $('#fieldsModal').on('shown.bs.modal', () => {
-        const parsedQuerystring = Qs.parse(window.location.search.split('?')[1]);
+      const parsedQuerystring = Qs.parse(window.location.search.split('?')[1]);
+      filters.forEach(({ name }) => {
+        if (parsedQuerystring[`${name}`] && parsedQuerystring[`${name}`].length > 0) {
+          parsedQuerystring[`${name}`].forEach((pd) => {
+            const el = $(`#${name}-select option`).filter((idx, option) => { return option.value === pd; });
+            if (el) $(el).prop('selected', true);
+          });
+        }
 
-        filters.forEach(({ name }) => {
-          if (parsedQuerystring[`${name}`] && parsedQuerystring[`${name}`].length > 0) {
-            parsedQuerystring[`${name}`].forEach((pd) => {
-              const el = $(`#${name}-select option`).filter((idx, option) => { return option.value === pd; });
-              if (el) $(el).prop('selected', true);
-            });
-          }
-
-          $(`#${name}-select`).chosen('destroy').chosen({ width: "95%" });
-        });
+        $(`#${name}-select`).chosen('destroy').chosen({ width: "95%" });
       });
 
       $('#fieldsModalSubmit').on('click', (e) => {
@@ -87,6 +84,35 @@
           <% } %>
       </tbody>
     </table>
+
+    <div class="modal fade" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="welcomeModalLabel">Welcome to Ledger</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>
+              Ledger is a tool developed by <a href="https://pittnews.com">The Pitt News</a>
+              to examine all goods and services valued at more than $1,000 purchased of the University of Pittsburgh.
+              This data is available through annual disclosure reports to the Commonwealth government.
+            </p>
+
+            <p>Use the "Edit fields" button to sort transactions by purchasing department, vendor and/or year.</p>
+
+            <p>Help us investigate: If you see transactions that look suspicious, you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if (displayWelcome === true) { %>
+      <script>$('#welcomeModal').modal();</script>
+    <% } %>
 
     <div class="modal fade" id="fieldsModal" tabindex="-1" role="dialog" aria-labelledby="fieldsModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
