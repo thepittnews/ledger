@@ -17,27 +17,27 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); }
 const filters = app.locals.filters = [
-  { filterName: 'purchaserDepartments', filterColumn: 'purchaser_department' },
-  { filterName: 'vendor_numbers', filterColumn: 'vendor_number' },
-  { filterName: 'years', filterColumn: 'year' }
+  { name: 'purchaserDepartments', column: 'purchaser_department' },
+  { name: 'vendor_numbers', column: 'vendor_number' },
+  { name: 'years', column: 'year' }
 ];
 
 const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
   var applicableTransactions = transactions;
-  filters.filter(({ filterName }) => { return !queryParametersToIgnore.includes(filterName); })
-  .forEach(({ filterName, filterColumn }) => {
-    if (query[filterName]) {
-      var selectValue = query[filterName];
+  filters.filter(({ name }) => { return !queryParametersToIgnore.includes(name); })
+  .forEach(({ name, column }) => {
+    if (query[name]) {
+      var selectValue = query[name];
       if (!Array.isArray(selectValue)) {
         selectValue = [selectValue];
       }
 
-      if (filterName === 'years' || filterName === 'vendor_numbers') {
+      if (name === 'years' || name === 'vendor_numbers') {
         selectValue = selectValue.map((sv) => { return Number(sv); });
       }
 
       applicableTransactions = applicableTransactions.filter((t) => {
-        return selectValue.includes(t[filterColumn]);
+        return selectValue.includes(t[column]);
       });
     }
   });
