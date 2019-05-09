@@ -1,21 +1,33 @@
-const sqlite3 = require('sqlite3');
-const db = new sqlite3.Database('db.sqlite3');
+const { readFileSync } = require('fs');
+const parse = require('util').promisify(require('csv-parse'));
+
 const express = require('express');
 const app = express();
-const { purchaserDepartments } = require('./common');
+
+const { dataColumns, dataYears, purchaserDepartments } = require('./common');
 
 var transactions = [];
-db.serialize(() => {
-  db.all('SELECT * from ledger_transaction', (err, rows) => {
-    if (err) throw err;
-    transactions = rows;
-  });
+parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
+  parsedTransactions.shift();
+
+  for(const data of parsedTransactions) {
+    var obj = {};
+    for(var i = 0; i < data.length; i++) {
+      const column = dataColumns[i];
+      if (['year', 'amount', 'vendor_number'].includes(column)) {
+        obj[column] = Number(data[i]);
+      } else {
+        obj[column] = data[i];
+      }
+    }
+
+    transactions.push(obj);
+  }
 });
-db.close();
 
 app.set('views', './views');
 app.set('view engine', 'ejs');
-app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); }
+app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); };
 const filters = app.locals.filters = [
   { name: 'purchaserDepartments', column: 'purchaser_department' },
   { name: 'vendor_numbers', column: 'vendor_number' },
@@ -26,20 +38,25 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
   var applicableTransactions = transactions;
   filters.filter(({ name }) => { return !queryParametersToIgnore.includes(name); })
   .forEach(({ name, column }) => {
-    if (query[name]) {
-      var selectValue = query[name];
-      if (!Array.isArray(selectValue)) {
-        selectValue = [selectValue];
-      }
+    if (!query[name]) return;
 
-      if (name === 'years' || name === 'vendor_numbers') {
-        selectValue = selectValue.map((sv) => { return Number(sv); });
-      }
-
-      applicableTransactions = applicableTransactions.filter((t) => {
-        return selectValue.includes(t[column]);
-      });
+    var selectValue = query[name];
+    if (!Array.isArray(selectValue)) {
+      selectValue = [selectValue];
     }
+
+    if (name === 'years' || name === 'vendor_numbers') {
+      selectValue = selectValue.map((sv) => { return Number(sv); });
+    }
+
+    applicableTransactions = applicableTransactions.filter((t) => {
+      var transactionValue = t[column];
+      if (name === 'years' || name === 'vendor_numbers') {
+        transactionValue = Number(transactionValue);
+      }
+
+      return selectValue.includes(transactionValue);
+    });
   });
 
   return applicableTransactions;
@@ -59,6 +76,7 @@ app.get('/', (req, res) => {
   });
 
   res.render('index', {
+    dataYears,
     transactions: getApplicableTransactions(req.query),
     purchaserDepartments,
     vendors
