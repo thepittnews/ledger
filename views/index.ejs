@@ -15,15 +15,15 @@
       $('#fieldsModal').on('shown.bs.modal', () => {
         const parsedQuerystring = Qs.parse(window.location.search.split('?')[1]);
 
-        filters.forEach(({ filterName }) => {
-          if (parsedQuerystring[`${filterName}`] && parsedQuerystring[`${filterName}`].length > 0) {
-            parsedQuerystring[`${filterName}`].forEach((pd) => {
-              const el = $(`#${filterName}-select option`).filter((idx, option) => { return option.value === pd; });
+        filters.forEach(({ name }) => {
+          if (parsedQuerystring[`${name}`] && parsedQuerystring[`${name}`].length > 0) {
+            parsedQuerystring[`${name}`].forEach((pd) => {
+              const el = $(`#${name}-select option`).filter((idx, option) => { return option.value === pd; });
               if (el) $(el).prop('selected', true);
             });
           }
 
-          $(`#${filterName}-select`, this).chosen('destroy').chosen({ width: "95%" });
+          $(`#${name}-select`).chosen('destroy').chosen({ width: "95%" });
         });
       });
 
@@ -31,8 +31,8 @@
         e.preventDefault();
 
         var filterValues = {};
-        filters.forEach(({ filterName }) => {
-          filterValues[filterName] = $(`#${filterName}-select`).val();
+        filters.forEach(({ name }) => {
+          filterValues[name] = $(`#${name}-select`).val();
         });
 
         window.location.replace(`http://${window.location.host}${window.location.pathname}?${Qs.stringify(filterValues)}`);
@@ -67,6 +67,7 @@
       <thead>
         <tr>
           <th scope="col" style="cursor:pointer" data-sort="int">Year</th>
+          <th scope="col" style="cursor:pointer" data-sort="int">Vendor Number</th>
           <th scope="col" style="cursor:pointer" data-sort="string">Vendor Name</th>
           <th scope="col" style="cursor:pointer" data-sort="money">Amount</th>
           <th scope="col" style="cursor:pointer" data-sort="string">Purchaser</th>
@@ -77,6 +78,7 @@
         <% for (var transaction of transactions) { %>
           <tr class="transaction">
             <td><%= transaction.year %></td>
+            <td><%= transaction.vendor_number %></td>
             <td><%= transaction.vendor_name %></td>
             <td>$<%= wrapComma(transaction.amount) %></td>
             <td><%= transaction.purchaser_department %></td>
@@ -107,9 +109,22 @@
             </div>
 
             <div class="form-group">
+              <label>Vendor</label><br>
+              <select id="vendor_numbers-select" multiple>
+                <% for (var vendor of vendors) { %>
+                  <option value="<%= vendor.number %>"><%= vendor.name %> (<%= vendor.number %>)</option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="form-group">
               <label>Year</label>
               <select id="years-select" multiple>
+                <option value="2014">2014</option>
                 <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
               </select>
             </div>
           </div>
