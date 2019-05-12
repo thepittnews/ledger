@@ -91,4 +91,63 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get('/change', (req, res) => {
+  const vendorsByNumber = getApplicableTransactions(req.query, ['vendor_numbers'])
+  .map((t) => {
+    return { name: t.vendor_name, number: t.vendor_number, year: t.year };
+  })
+  .reduce((rv, x) => {
+    (rv[x.number] = rv[x.number] || []).push(x);
+    return rv;
+  }, {});
+  const vendors = Object.keys(vendorsByNumber).map((vendorNumber) => {
+    return vendorsByNumber[vendorNumber].sort((a, b) => { return a.year - b.year })[0];
+  });
+
+  var mappedTransactions = [];
+  var transactionsByVendorNumber = getApplicableTransactions(req.query)
+  .reduce((rv, x) => {
+    (rv[x.vendor_number] = rv[x.vendor_number] || []).push(x);
+    return rv;
+  }, {});
+  Object.keys(transactionsByVendorNumber).forEach((vendorNumber) => {
+    const transactionsByVendorNumberByDepartment = transactionsByVendorNumber[vendorNumber].reduce((rv, x) => {
+      (rv[x.purchaser_department] = rv[x.purchaser_department] || []).push(x);
+      return rv;
+    }, {});
+
+    Object.keys(transactionsByVendorNumberByDepartment).forEach((dept) => {
+      const transactionsByVendorNumberByDepartmentAndType = transactionsByVendorNumberByDepartment[dept].reduce((rv, x) => {
+        (rv[x.type] = rv[x.type] || []).push(x);
+        return rv;
+      }, {});
+
+      Object.keys(transactionsByVendorNumberByDepartmentAndType).forEach((type) => {
+        const transactions = transactionsByVendorNumberByDepartmentAndType[type].sort((a, b) => { return a.year - b.year });
+        const mappedTransaction = Object.assign(
+          {},
+          transactions[transactions.length - 1],
+          { amount: 100 * ((transactions[transactions.length - 1].amount - transactions[0].amount) / (transactions[0].amount)) }
+        );
+
+        mappedTransactions.push(mappedTransaction);
+      });
+    });
+  });
+
+  var displayWelcome = false;
+  if (mappedTransactions.length === 14728) {
+    mappedTransactions = [];
+    displayWelcome = true;
+  }
+
+  res.render('change', {
+    dataYears,
+    displayWelcome,
+    transactions: mappedTransactions,
+    purchaserDepartments,
+    vendors
+  });
+});
+
 app.listen(3000);
