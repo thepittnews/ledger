@@ -115,7 +115,7 @@ const purchaseTypes = {
 
 module.exports = {
   dataColumns: ['year', 'amount', 'vendor_number', 'vendor_name', 'vendor_address', 'purchaser_department', 'type'],
-  dataYears: [2014, 2016, 2017, 2018],
+  dataYears: [2014, 2015, 2016, 2017, 2018],
   purchaserDepartments,
   purchaserDepartmentAliases,
   purchaseTypes
