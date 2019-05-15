@@ -77,7 +77,7 @@ app.get('/', (req, res) => {
 
   var applicableTransactions = getApplicableTransactions(req.query);
   var displayWelcome = false;
-  if (applicableTransactions.length === 30266) {
+  if (applicableTransactions.length === 37858) {
     applicableTransactions = [];
     displayWelcome = true;
   }
