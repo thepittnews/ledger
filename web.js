@@ -75,10 +75,9 @@ app.get('/', (req, res) => {
     return vendorsByNumber[vendorNumber].sort((a, b) => { return a.year - b.year })[0];
   });
 
-  var applicableTransactions = getApplicableTransactions(req.query);
+  const applicableTransactions = getApplicableTransactions(req.query);
   var displayWelcome = false;
   if (applicableTransactions.length === 37858) {
-    applicableTransactions = [];
     displayWelcome = true;
   }
 
