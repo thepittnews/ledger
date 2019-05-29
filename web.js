@@ -4,7 +4,7 @@ const parse = require('util').promisify(require('csv-parse'));
 const express = require('express');
 const app = express();
 
-const { dataColumns, dataYears, purchaserDepartments } = require('./common');
+const { dataColumns, dataYears, purchaserDepartments, purchaseTypes } = require('./common');
 
 var transactions = [];
 parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
@@ -31,6 +31,7 @@ app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); };
 const filters = app.locals.filters = [
   { name: 'purchaserDepartments', column: 'purchaser_department' },
   { name: 'vendor_numbers', column: 'vendor_number' },
+  { name: 'purchase_types', column: 'type' },
   { name: 'years', column: 'year' }
 ];
 
@@ -86,6 +87,7 @@ app.get('/', (req, res) => {
     displayWelcome,
     transactions: applicableTransactions,
     purchaserDepartments,
+    purchaseTypes: Object.values(purchaseTypes),
     vendors
   });
 });

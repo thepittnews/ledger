@@ -146,6 +146,15 @@
             </div>
 
             <div class="form-group">
+              <label>Purchase type</label><br>
+              <select id="purchase_types-select" multiple>
+                <% for (var purchaseType of purchaseTypes) { %>
+                  <option value="<%= purchaseType %>"><%= purchaseType %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="form-group">
               <label>Year</label>
               <select id="years-select" multiple>
                 <% for (const dataYear of dataYears) { %>
