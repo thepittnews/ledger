@@ -2,7 +2,13 @@
 <head>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="https://harvesthq.github.io/chosen/chosen.css" rel="stylesheet">
-  <style>.center { text-align: center; }</style>
+  <style>
+    .center { text-align: center; }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+  </style>
   <title>Ledger</title>
   <script src="https://harvesthq.github.io/chosen/docsupport/jquery-3.2.1.min.js" type="text/javascript"></script>
   <script src="https://harvesthq.github.io/chosen/chosen.jquery.js"></script>
@@ -36,11 +42,19 @@
         window.location.replace(`http://${window.location.host}${window.location.pathname}?${Qs.stringify(filterValues)}`);
       });
 
-      $("#transactionTable").stupidtable({
+      const table = $("#transactionTable").stupidtable({
         "money": (a, b) => {
           const toMoney = (amount) => { return Number(amount.replace(/\$/g, '').replace(/,/g, '')); };
           return toMoney(a) - toMoney(b);
         }
+      });
+
+      table.on("aftertablesort", (_, data) => {
+        const columnHeader = data['$th'];
+        columnHeader.find(".arrow").remove();
+        const dir = $.fn.stupidtable.dir;
+        const arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+        columnHeader.append('<span class="arrow">' + arrow +'</span>');
       });
     });
   </script>
@@ -62,6 +76,8 @@
 
           <p>
             Use the search button to sort transactions by <br> purchasing department, vendor, purchase type and/or year.
+            <br>
+            Click on the header for each column to further sort the transactions.
           </p>
 
           <p>Help us investigate: If you see transactions that need a closer look, <br> you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
@@ -77,7 +93,7 @@
           </h3>
 
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fieldsModal">
-            Search
+            Edit Search
           </button>
         </div>
       </div>
@@ -111,9 +127,7 @@
     </table>
 
     <% if (tooManyResults) { %>
-      <p class="center">
-        Woah, that's a lot of transactions! <br> Try narrowing down your search.
-      </p>
+      <p class="center">Woah, that's a lot of transactions! <br> Try narrowing down your search.</p>
     <% } %>
 
     <div class="modal fade" id="fieldsModal" tabindex="-1" role="dialog" aria-labelledby="fieldsModalLabel" aria-hidden="true">
