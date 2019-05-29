@@ -77,17 +77,17 @@ app.get('/', (req, res) => {
   });
 
   const applicableTransactions = getApplicableTransactions(req.query);
-  var displayWelcome = false;
-  if (applicableTransactions.length === 37858) {
-    displayWelcome = true;
+  var tooManyResults = false;
+  if (applicableTransactions.length > 500) {
+    tooManyResults = true;
   }
 
   res.render('index', {
     dataYears,
-    displayWelcome,
     transactions: applicableTransactions,
     purchaserDepartments,
     purchaseTypes: Object.values(purchaseTypes),
+    tooManyResults,
     vendors
   });
 });
