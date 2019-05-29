@@ -16,15 +16,11 @@ dataYears.forEach((dataYear, i) => {
   parse(readFileSync(`data/FY${dataYear.toString().slice(-2)}_contracts.csv`)).then((transactions) => {
     // Remove headers and footers
     transactions.shift();
-    if ([2014, 2017, 2018].includes(dataYear)) {
-      transactions.pop();
-    }
-    if ([2017, 2018].includes(dataYear)) {
-      transactions.pop();
-    }
+    if ([2014, 2017, 2018].includes(dataYear)) { transactions.pop(); }
+    if ([2017, 2018].includes(dataYear)) { transactions.pop(); }
 
     transactions.forEach((transaction, i2) => {
-      const vendorAddress = `${transaction[5]}\n${transaction[6]}${transaction[6] ? "\n" : "" }${transaction[7]}, ${transaction[8]} ${transaction[9]}`;
+      const vendorAddress = `${transaction[5]}\n${transaction[6]}${transaction[6] ? "\n" : ""}${transaction[7]}, ${transaction[8]} ${transaction[9]}`;
 
       const purchaseType = purchaseTypes[Number(transaction[2])];
       if (purchaseType === undefined) {
