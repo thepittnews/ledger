@@ -29,7 +29,7 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); };
 const filters = app.locals.filters = [
-  { name: 'purchaserDepartments', column: 'purchaser_department' },
+  { name: 'purchaser_departments', column: 'purchaser_department' },
   { name: 'vendor_numbers', column: 'vendor_number' },
   { name: 'purchase_types', column: 'type' },
   { name: 'years', column: 'year' }
