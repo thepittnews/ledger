@@ -16,27 +16,27 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.7.0/qs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stupidtable/1.1.3/stupidtable.min.js"></script>
   <script>
-    const filters = <%- JSON.stringify(filters) %>;
+    const filterColumns = <%- JSON.stringify(filterColumns) %>;
 
     $(() => {
       const parsedQuerystring = Qs.parse(window.location.search.split('?')[1]);
-      filters.forEach(({ name }) => {
-        if (parsedQuerystring[`${name}`] && parsedQuerystring[`${name}`].length > 0) {
-          parsedQuerystring[`${name}`].forEach((pd) => {
-            const el = $(`#${name}-select option`).filter((idx, option) => { return option.value === pd; });
+      filterColumns.forEach((filterColumn) => {
+        if (parsedQuerystring[`${filterColumn}s`] && parsedQuerystring[`${filterColumn}s`].length > 0) {
+          parsedQuerystring[`${filterColumn}s`].forEach((pd) => {
+            const el = $(`#${filterColumn}s-select option`).filter((idx, option) => { return option.value === pd; });
             if (el) $(el).prop('selected', true);
           });
         }
 
-        $(`#${name}-select`).chosen('destroy').chosen({ width: "95%" });
+        $(`#${filterColumn}s-select`).chosen('destroy').chosen({ width: "95%" });
       });
 
       $('#fieldsModalSubmit').on('click', (e) => {
         e.preventDefault();
 
         var filterValues = {};
-        filters.forEach(({ name }) => {
-          filterValues[name] = $(`#${name}-select`).val();
+        filterColumns.forEach((filterColumn) => {
+          filterValues[`${filterColumn}s`] = $(`#${filterColumn}s-select`).val();
         });
 
         window.location.replace(`http://${window.location.host}${window.location.pathname}?${Qs.stringify(filterValues)}`);
@@ -161,7 +161,7 @@
 
             <div class="form-group">
               <label>Purchase type</label><br>
-              <select id="purchase_types-select" multiple>
+              <select id="types-select" multiple>
                 <% for (var purchaseType of purchaseTypes) { %>
                   <option value="<%= purchaseType %>"><%= purchaseType %></option>
                 <% } %>
