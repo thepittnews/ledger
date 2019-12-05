@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/pittnews/ledger.pittnews.com/
+    - /bin/cp -R . $DEPLOYPATH
