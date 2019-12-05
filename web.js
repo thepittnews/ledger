@@ -6,6 +6,13 @@ const app = express();
 
 const { dataColumns, dataYears, purchaserDepartments, purchaseTypes } = require('./common');
 const numberColumns = ['year', 'amount', 'vendor_number'];
+const getColumnValue = (column, rawValue) => {
+  if (numberColumns.includes(column)) {
+    return Number(rawValue);
+  } else {
+    return rawValue;
+  }
+};
 
 var transactions = [];
 parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
@@ -15,11 +22,7 @@ parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
     var obj = {};
     for(var i = 0; i < data.length; i++) {
       const column = dataColumns[i];
-      if (numberColumns.includes(column)) {
-        obj[column] = Number(data[i]);
-      } else {
-        obj[column] = data[i];
-      }
+      obj[column] = getColumnValue(column, data[i]);
     }
 
     transactions.push(obj);
@@ -38,20 +41,9 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
     return !queryParametersToIgnore.includes(`${filterColumn}s`) && query[`${filterColumn}s`];
   })
   .forEach((filterColumn) => {
-    var selectValue;
-
-    if (numberColumns.includes(filterColumn)) {
-      selectValue = query[`${filterColumn}s`].map((sv) => { return Number(sv); });
-    } else {
-      selectValue = query[`${filterColumn}s`];
-    }
-
+    const selectValue = query[`${filterColumn}s`].map((sv) => { return getColumnValue(filterColumn, sv); });
     applicableTransactions = applicableTransactions.filter((t) => {
-      if (numberColumns.includes(filterColumn)) {
-        return selectValue.includes(Number(t[filterColumn]));
-      } else {
-        return selectValue.includes(t[filterColumn]);
-      }
+      return selectValue.includes(getColumnValue(filterColumn, t[filterColumn]));
     });
   });
 
