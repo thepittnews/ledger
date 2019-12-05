@@ -11,16 +11,12 @@ const getColumnValue = (column, rawValue) => numberColumns.includes(column) ? Nu
 var transactions = [];
 parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
   parsedTransactions.shift();
-
-  for(const data of parsedTransactions) {
-    var obj = {};
-    for(var i = 0; i < data.length; i++) {
-      const column = dataColumns[i];
-      obj[column] = getColumnValue(column, data[i]);
-    }
-
-    transactions.push(obj);
-  }
+  transactions = parsedTransactions.map((data) => {
+    return data.reduce((acc, value, i) => {
+      acc[dataColumns[i]] = getColumnValue(dataColumns[i], value);
+      return acc;
+    }, {});
+  });
 });
 
 app.set('views', './views');
@@ -46,9 +42,9 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
 
 app.get('/', (req, res) => {
   const vendorsByNumber = getApplicableTransactions(req.query, ['vendor_numbers'])
-  .reduce((rv, x) => {
-    (rv[x.vendor_number] = rv[x.vendor_number] || []).push(x);
-    return rv;
+  .reduce((acc, x) => {
+    (acc[x.vendor_number] = acc[x.vendor_number] || []).push(x);
+    return acc;
   }, {});
   const vendors = Object.keys(vendorsByNumber).map((vendorNumber) => {
     return vendorsByNumber[vendorNumber][0];

@@ -9,8 +9,7 @@ const {
   purchaseTypes
 } = require('./common');
 
-var processedData = [];
-processedData.push(dataColumns);
+var processedData = [dataColumns];
 
 dataYears.forEach((dataYear, i) => {
   parse(readFileSync(`data/FY${dataYear.toString().slice(-2)}_contracts.csv`)).then((transactions) => {
