@@ -6,13 +6,7 @@ const app = express();
 
 const { dataColumns, dataYears, purchaserDepartments, purchaseTypes } = require('./common');
 const numberColumns = ['year', 'amount', 'vendor_number'];
-const getColumnValue = (column, rawValue) => {
-  if (numberColumns.includes(column)) {
-    return Number(rawValue);
-  } else {
-    return rawValue;
-  }
-};
+const getColumnValue = (column, rawValue) => numberColumns.includes(column) ? Number(rawValue) : rawValue;
 
 var transactions = [];
 parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
@@ -52,11 +46,8 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
 
 app.get('/', (req, res) => {
   const vendorsByNumber = getApplicableTransactions(req.query, ['vendor_numbers'])
-  .map((t) => {
-    return { name: t.vendor_name, number: t.vendor_number, year: t.year };
-  })
   .reduce((rv, x) => {
-    (rv[x.number] = rv[x.number] || []).push(x);
+    (rv[x.vendor_number] = rv[x.vendor_number] || []).push(x);
     return rv;
   }, {});
   const vendors = Object.keys(vendorsByNumber).map((vendorNumber) => {

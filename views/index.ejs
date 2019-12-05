@@ -73,13 +73,11 @@
             <br>
             By law, these transactions must be disclosed annually.
           </p>
-
           <p>
             Use the search button to sort transactions by <br> purchasing department, vendor, purchase type and/or year.
             <br>
             Click on the header for each column to further sort the transactions.
           </p>
-
           <p>Help us investigate: If you see transactions that need a closer look, <br> you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
         </div>
       </div>
@@ -154,7 +152,7 @@
               <label>Vendor</label><br>
               <select id="vendor_numbers-select" multiple>
                 <% for (var vendor of vendors) { %>
-                  <option value="<%= vendor.number %>"><%= vendor.name %></option>
+                  <option value="<%= vendor.vendor_number %>"><%= vendor.vendor_name %></option>
                 <% } %>
               </select>
             </div>
