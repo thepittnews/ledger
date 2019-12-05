@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="https://harvesthq.github.io/chosen/chosen.css" rel="stylesheet">
   <style>
@@ -68,15 +69,11 @@
       <div class="col-md-7">
         <div class="center">
           <p>
-            Ledger is a tool developed by <a href="https://pittnews.com">The Pitt News</a>
-            to search all Pitt expenses worth more than $1,000.
-            <br>
-            By law, these transactions must be disclosed annually.
+            Ledger is a tool from <a href="https://pittnews.com">The Pitt News</a>
+            to search all Pitt expenses worth more than $1,000. By law, these transactions are disclosed annually.
           </p>
           <p>
-            Use the search button to sort transactions by <br> purchasing department, vendor, purchase type and/or year.
-            <br>
-            Click on the header for each column to further sort the transactions.
+            Use the search button and column headers to sort transactions.
           </p>
           <p>Help us investigate: If you see transactions that need a closer look, <br> you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
         </div>
@@ -97,23 +94,24 @@
       </div>
     </div>
 
-    <table class="table table-striped" id="transactionTable">
+    <div class="row">
+      <div class="col-md-12 table-responsive-lg">
+
+    <table class="table table-striped table-lg" id="transactionTable">
       <thead>
         <tr>
           <th scope="col" style="cursor:pointer" data-sort="int">Year</th>
-          <th scope="col" style="cursor:pointer" data-sort="int">Vendor Number</th>
-          <th scope="col" style="cursor:pointer" data-sort="string">Vendor Name</th>
+          <th scope="col" style="cursor:pointer" data-sort="string">Vendor</th>
           <th scope="col" style="cursor:pointer" data-sort="money">Amount</th>
           <th scope="col" style="cursor:pointer" data-sort="string">Purchaser</th>
-          <th scope="col" style="cursor:pointer" data-sort="string">Purchase Type</th>
+          <th scope="col" style="cursor:pointer" data-sort="string">Type</th>
         </tr>
       </thead>
       <tbody>
         <% if (!tooManyResults) { %>
           <% for (var transaction of transactions) { %>
             <tr class="transaction">
-              <td><%= transaction.year %></td>
-              <td><%= transaction.vendor_number %></td>
+              <td scope="row"><%= transaction.year %></td>
               <td><%= transaction.vendor_name %></td>
               <td>$<%= wrapComma(transaction.amount) %></td>
               <td><%= transaction.purchaser_department %></td>
@@ -128,6 +126,9 @@
       <p class="center">Woah, that's a lot of transactions! <br> Try narrowing down your search.</p>
     <% } %>
 
+      </div>
+    </div>
+
     <div class="modal fade" id="fieldsModal" tabindex="-1" role="dialog" aria-labelledby="fieldsModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -140,7 +141,7 @@
 
           <div class="modal-body">
             <div class="form-group">
-              <label>Purchaser Department</label><br>
+              <label>Purchaser</label><br>
               <select id="purchaser_departments-select" multiple>
                 <% for (var purchaserDepartment of purchaserDepartments) { %>
                   <option value="<%= purchaserDepartment %>"><%= purchaserDepartment %></option>
@@ -158,7 +159,7 @@
             </div>
 
             <div class="form-group">
-              <label>Purchase type</label><br>
+              <label>Type</label><br>
               <select id="types-select" multiple>
                 <% for (var purchaseType of purchaseTypes) { %>
                   <option value="<%= purchaseType %>"><%= purchaseType %></option>
