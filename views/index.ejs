@@ -18,7 +18,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stupidtable/1.1.3/stupidtable.min.js"></script>
   <script>
     const filterColumns = <%- JSON.stringify(filterColumns) %>;
-
     $(() => {
       $('#welcomeModal').modal();
 
@@ -36,11 +35,10 @@
 
       $('#fieldsModalSubmit').on('click', (e) => {
         e.preventDefault();
-
-        var filterValues = {};
-        filterColumns.forEach((filterColumn) => {
-          filterValues[`${filterColumn}s`] = $(`#${filterColumn}s-select`).val();
-        });
+        const filterValues = filterColumns.reduce((acc, filterColumn) => {
+          acc[`${filterColumn}s`] = $(`#${filterColumn}s-select`).val();
+          return acc;
+        }, {});
 
         window.location.replace(`http://${window.location.host}${window.location.pathname}?${Qs.stringify(filterValues)}`);
       });
@@ -55,8 +53,7 @@
       table.on("aftertablesort", (_, data) => {
         const columnHeader = data['$th'];
         columnHeader.find(".arrow").remove();
-        const dir = $.fn.stupidtable.dir;
-        const arrow = data.direction === dir.ASC ? "&uarr;" : "&darr;";
+        const arrow = data.direction === $.fn.stupidtable.dir.ASC ? "&uarr;" : "&darr;";
         columnHeader.append('<span class="arrow">' + arrow +'</span>');
       });
     });
@@ -66,7 +63,7 @@
 <body>
   <div class="containter">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Ledger</a>
+      <a class="navbar-brand" href="/">Ledger</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -91,7 +88,7 @@
       <div class="col-md-12">
         <br>
         <h3 class="center">
-          Found <b><%= wrapComma(transactions.length) %></b> transactions during <b><%= years.join(", ") %></b>,
+          Found <b><%= wrapComma(transactions.length) %></b> transactions during <b><%= yearDisplay(years) %></b>,
           worth <b>$<%= wrapComma(transactions.reduce((total, num) => { return total + num.amount ;}, 0)) %></b>
         </h3>
         <br>
@@ -124,6 +121,7 @@
               <% } %>
           </tbody>
         </table>
+
         <% if (tooManyResults) { %>
           <p class="center">Woah, that's a lot of transactions! <br> Try narrowing down your search.</p>
         <% } %>
@@ -147,9 +145,6 @@
             </p>
             <p>Use the search button and column headers to sort transactions.</p>
             <p>Help us investigate: If you see transactions that need a closer look, you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
-          </div>
-
-          <div class="modal-footer">
           </div>
         </div>
       </div>

@@ -24,6 +24,23 @@ app.set('view engine', 'ejs');
 app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); };
 const filterColumns = app.locals.filterColumns = [ 'purchaser_department', 'vendor_number', 'type', 'year'];
 
+function isSequential(array) {
+  return array.every((a, i, aa) => {
+    return !i || (aa[i - 1] + 1 === a);
+  });
+}
+app.locals.yearDisplay = (years) => {
+  if (years.length === 1) {
+    return years[0];
+  } else if (years.length === 2) {
+    return `${years[0]} and ${years[1]}`;
+  }  else if (isSequential(years)) {
+    return `${years[0]}-${years[years.length - 1]}`;
+  } else {
+    return `${years.slice(0, years.length - 2).join(', ')} and ${years[years.length - 1]}`;
+  }
+};
+
 const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
   var applicableTransactions = transactions;
 
@@ -53,16 +70,18 @@ app.get('/', (req, res) => {
   var applicableTransactions = getApplicableTransactions(req.query);
   var tooManyResults = false;
   var emptyQuery = Object.keys(req.query).length === 0;
-  var years = req.query.years || [2014, 2015, 2016, 2017, 2018];
-
-  if (applicableTransactions.length > 500 && !emptyQuery) {
-    tooManyResults = true;
-  }
 
   if (emptyQuery) {
     const moneySorter = (a, b) => b.amount - a.amount;
     years = [2018];
     applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort(moneySorter);
+  } else if (applicableTransactions.length > 500) {
+    tooManyResults = true;
+  }
+
+  var years = [2014, 2015, 2016, 2017, 2018];
+  if (req.query.years) {
+    years = req.query.years.map(Number).sort();
   }
 
   res.render('index', {
