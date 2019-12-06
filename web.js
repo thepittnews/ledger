@@ -50,10 +50,17 @@ app.get('/', (req, res) => {
     return vendorsByNumber[vendorNumber][0];
   });
 
-  const applicableTransactions = getApplicableTransactions(req.query);
+  var applicableTransactions = getApplicableTransactions(req.query);
   var tooManyResults = false;
-  if (applicableTransactions.length > 500) {
+  var emptyQuery = Object.keys(req.query).length === 0;
+
+  if (applicableTransactions.length > 500 && !emptyQuery) {
     tooManyResults = true;
+  }
+
+  if (emptyQuery) {
+    const moneySorter = (a, b) => b.amount - a.amount;
+    applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort(moneySorter);
   }
 
   res.render('index', {
@@ -61,6 +68,7 @@ app.get('/', (req, res) => {
     transactions: applicableTransactions,
     purchaserDepartments,
     purchaseTypes: Object.values(purchaseTypes),
+    emptyQuery,
     tooManyResults,
     vendors
   });
