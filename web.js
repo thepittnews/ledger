@@ -70,12 +70,14 @@ app.get('/', (req, res) => {
   var applicableTransactions = getApplicableTransactions(req.query);
   var tooManyResults = false;
   var emptyQuery = Object.keys(req.query).length === 0;
+  var currentMaxTransactionsIndex = applicableTransactions.length;
 
   if (emptyQuery) {
-    const moneySorter = (a, b) => b.amount - a.amount;
     years = [2018];
-    applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort(moneySorter);
+    currentMaxTransactionsIndex = 30;
+    applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort((a, b) => b.amount - a.amount);
   } else if (applicableTransactions.length > 500) {
+    currentMaxTransactionsIndex = 30;
     tooManyResults = true;
   }
 
@@ -85,6 +87,7 @@ app.get('/', (req, res) => {
   }
 
   res.render('index', {
+    currentMaxTransactionsIndex,
     dataYears,
     transactions: applicableTransactions,
     purchaserDepartments,

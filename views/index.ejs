@@ -18,6 +18,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stupidtable/1.1.3/stupidtable.min.js"></script>
   <script>
     const filterColumns = <%- JSON.stringify(filterColumns) %>;
+    const transactions = <%- JSON.stringify(transactions) %>;
+    var currentMaxTransactionsIndex = <%- currentMaxTransactionsIndex %>;
+
     $(() => {
       if (document.cookie.indexOf("welcomeModalShown=true") < 0) {
         $("#welcomeModal").modal();
@@ -58,6 +61,27 @@
         columnHeader.find(".arrow").remove();
         const arrow = data.direction === $.fn.stupidtable.dir.ASC ? "&uarr;" : "&darr;";
         columnHeader.append('<span class="arrow">' + arrow +'</span>');
+      });
+
+      $(window).scroll(() => {
+        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+          if (currentMaxTransactionsIndex !== transactions.length) {
+            const newRows = transactions.slice(currentMaxTransactionsIndex, currentMaxTransactionsIndex + 30)
+            .map((transaction) => {
+              return `
+                <tr class="transaction">
+                  <td scope="row">${transaction.year}</td>
+                  <td>${transaction.vendor_name}</td>
+                  <td>$${transaction.amount.toLocaleString('en-US')}</td>
+                  <td>${transaction.purchaser_department}</td>
+                  <td>${transaction.type}</td>
+                </tr>`;
+            });
+            $('table#transactionTable tbody').append(newRows.join(''));
+
+            currentMaxTransactionsIndex += 30;
+          }
+        }
       });
     });
   </script>
@@ -112,7 +136,8 @@
           </thead>
           <tbody>
             <% if (!tooManyResults) { %>
-              <% for (var transaction of transactions) { %>
+              <% var transactionsForFirstLoad = transactions.slice(0, currentMaxTransactionsIndex) %>
+              <% for (var transaction of transactionsForFirstLoad) { %>
                 <tr class="transaction">
                   <td scope="row"><%= transaction.year %></td>
                   <td><%= transaction.vendor_name %></td>
