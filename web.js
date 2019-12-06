@@ -67,8 +67,12 @@ app.get('/', (req, res) => {
     return vendorsByNumber[vendorNumber][0];
   });
 
+  var years = [2014, 2015, 2016, 2017, 2018];
+  if (req.query.years) {
+    years = req.query.years.map(Number).sort();
+  }
+
   var applicableTransactions = getApplicableTransactions(req.query);
-  var tooManyResults = false;
   var emptyQuery = Object.keys(req.query).length === 0;
   var currentMaxTransactionsIndex = applicableTransactions.length;
 
@@ -78,12 +82,6 @@ app.get('/', (req, res) => {
     applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort((a, b) => b.amount - a.amount);
   } else if (applicableTransactions.length > 500) {
     currentMaxTransactionsIndex = 30;
-    tooManyResults = true;
-  }
-
-  var years = [2014, 2015, 2016, 2017, 2018];
-  if (req.query.years) {
-    years = req.query.years.map(Number).sort();
   }
 
   res.render('index', {
@@ -92,8 +90,6 @@ app.get('/', (req, res) => {
     transactions: applicableTransactions,
     purchaserDepartments,
     purchaseTypes: Object.values(purchaseTypes),
-    emptyQuery,
-    tooManyResults,
     vendors,
     years,
   });
