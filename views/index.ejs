@@ -19,7 +19,10 @@
   <script>
     const filterColumns = <%- JSON.stringify(filterColumns) %>;
     $(() => {
-      $('#welcomeModal').modal();
+      if (document.cookie.indexOf("welcomeModalShown=true") < 0) {
+        $("#welcomeModal").modal();
+        document.cookie = "welcomeModalShown=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+      }
 
       const parsedQuerystring = Qs.parse(window.location.search.split('?')[1]);
       filterColumns.forEach((filterColumn) => {
