@@ -20,6 +20,8 @@
     const filterColumns = <%- JSON.stringify(filterColumns) %>;
 
     $(() => {
+      $('#welcomeModal').modal();
+
       const parsedQuerystring = Qs.parse(window.location.search.split('?')[1]);
       filterColumns.forEach((filterColumn) => {
         if (parsedQuerystring[`${filterColumn}s`] && parsedQuerystring[`${filterColumn}s`].length > 0) {
@@ -63,69 +65,93 @@
 
 <body>
   <div class="containter">
-    <h1 class="center">Ledger</h1>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Ledger</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="modal" data-target="#welcomeModal">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="modal" data-target="#fieldsModal">Edit Search</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="https://pittnews.com" target="_blank">The Pitt News</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
     <div class="row">
-      <div class="col-md-7">
-        <div class="center">
-          <p>
-            Ledger is a tool from <a href="https://pittnews.com">The Pitt News</a>
-            to search all Pitt expenses worth more than $1,000. By law, these transactions are disclosed annually.
-          </p>
-          <p>
-            Use the search button and column headers to sort transactions.
-          </p>
-          <p>Help us investigate: If you see transactions that need a closer look, <br> you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
-        </div>
-      </div>
-
-      <div class="col-md-5">
-        <div class="center">
-          <h3>
-            Found <b><%= wrapComma(transactions.length) %></b> transactions,
-            <br>
-            worth <b>$<%= wrapComma(transactions.reduce((total, num) => { return total + num.amount ;}, 0)) %></b>
-          </h3>
-
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#fieldsModal">
-            Edit Search
-          </button>
-        </div>
+      <div class="col-md-12">
+        <br>
+        <h3 class="center">
+          Found <b><%= wrapComma(transactions.length) %></b> transactions during <b><%= years.join(", ") %></b>,
+          worth <b>$<%= wrapComma(transactions.reduce((total, num) => { return total + num.amount ;}, 0)) %></b>
+        </h3>
+        <br>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-12 table-responsive-lg">
-
-    <table class="table table-striped table-lg" id="transactionTable">
-      <thead>
-        <tr>
-          <th scope="col" style="cursor:pointer" data-sort="int">Year</th>
-          <th scope="col" style="cursor:pointer" data-sort="string">Vendor</th>
-          <th scope="col" style="cursor:pointer" data-sort="money">Amount</th>
-          <th scope="col" style="cursor:pointer" data-sort="string">Purchaser</th>
-          <th scope="col" style="cursor:pointer" data-sort="string">Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (!tooManyResults) { %>
-          <% for (var transaction of transactions) { %>
-            <tr class="transaction">
-              <td scope="row"><%= transaction.year %></td>
-              <td><%= transaction.vendor_name %></td>
-              <td>$<%= wrapComma(transaction.amount) %></td>
-              <td><%= transaction.purchaser_department %></td>
-              <td><%= transaction.type %></td>
+        <table class="table table-striped table-lg" id="transactionTable">
+          <thead>
+            <tr>
+              <th scope="col" style="cursor:pointer" data-sort="int">Year <span class="arrow">&#8645;</span></th>
+              <th scope="col" style="cursor:pointer" data-sort="string">Vendor <span class="arrow">&#8645;</span></th>
+              <th scope="col" style="cursor:pointer" data-sort="money">Amount <span class="arrow">&#8645;</span></th>
+              <th scope="col" style="cursor:pointer" data-sort="string">Purchaser <span class="arrow">&#8645;</span></th>
+              <th scope="col" style="cursor:pointer" data-sort="string">Type <span class="arrow">&#8645;</span></th>
             </tr>
-            <% } %>
-          <% } %>
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            <% if (!tooManyResults) { %>
+              <% for (var transaction of transactions) { %>
+                <tr class="transaction">
+                  <td scope="row"><%= transaction.year %></td>
+                  <td><%= transaction.vendor_name %></td>
+                  <td>$<%= wrapComma(transaction.amount) %></td>
+                  <td><%= transaction.purchaser_department %></td>
+                  <td><%= transaction.type %></td>
+                </tr>
+                <% } %>
+              <% } %>
+          </tbody>
+        </table>
+        <% if (tooManyResults) { %>
+          <p class="center">Woah, that's a lot of transactions! <br> Try narrowing down your search.</p>
+        <% } %>
+      </div>
+    </div>
 
-    <% if (tooManyResults) { %>
-      <p class="center">Woah, that's a lot of transactions! <br> Try narrowing down your search.</p>
-    <% } %>
+    <div class="modal fade" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="welcomeModalLabel">Ledger</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
 
+          <div class="modal-body">
+            <p>
+              Ledger is a tool from <a href="https://pittnews.com">The Pitt News</a>
+              to search all Pitt expenses worth more than $1,000. By law, these transactions are disclosed annually.
+            </p>
+            <p>Use the search button and column headers to sort transactions.</p>
+            <p>Help us investigate: If you see transactions that need a closer look, you can contact The Pitt News at <a href="mailto:news@pittnews.com">news@pittnews.com</a>.</p>
+          </div>
+
+          <div class="modal-footer">
+          </div>
+        </div>
       </div>
     </div>
 

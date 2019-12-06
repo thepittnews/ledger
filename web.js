@@ -53,6 +53,7 @@ app.get('/', (req, res) => {
   var applicableTransactions = getApplicableTransactions(req.query);
   var tooManyResults = false;
   var emptyQuery = Object.keys(req.query).length === 0;
+  var years = req.query.years || [2014, 2015, 2016, 2017, 2018];
 
   if (applicableTransactions.length > 500 && !emptyQuery) {
     tooManyResults = true;
@@ -60,6 +61,7 @@ app.get('/', (req, res) => {
 
   if (emptyQuery) {
     const moneySorter = (a, b) => b.amount - a.amount;
+    years = [2018];
     applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort(moneySorter);
   }
 
@@ -70,7 +72,8 @@ app.get('/', (req, res) => {
     purchaseTypes: Object.values(purchaseTypes),
     emptyQuery,
     tooManyResults,
-    vendors
+    vendors,
+    years,
   });
 });
 
