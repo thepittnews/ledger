@@ -24,11 +24,9 @@ app.set('view engine', 'ejs');
 app.locals.wrapComma = (number) => { return number.toLocaleString('en-US'); };
 const filterColumns = app.locals.filterColumns = [ 'purchaser_department', 'vendor_number', 'type', 'year'];
 
-function isSequential(array) {
-  return array.every((a, i, aa) => {
-    return !i || (aa[i - 1] + 1 === a);
-  });
-}
+const isSequential = (array) => array.every((a, i, aa) => {
+  return !i || (aa[i - 1] + 1 === a);
+});
 app.locals.yearDisplay = (years) => {
   if (years.length === 1) {
     return years[0];
