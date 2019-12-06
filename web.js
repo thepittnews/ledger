@@ -69,10 +69,9 @@ app.get('/', (req, res) => {
   }
 
   var applicableTransactions = getApplicableTransactions(req.query);
-  var emptyQuery = Object.keys(req.query).length === 0;
   var currentMaxTransactionsIndex = applicableTransactions.length;
 
-  if (emptyQuery) {
+  if (Object.keys(req.query).length === 0) {
     years = [2018];
     currentMaxTransactionsIndex = 30;
     applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort((a, b) => b.amount - a.amount);
