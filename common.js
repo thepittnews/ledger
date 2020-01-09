@@ -53,6 +53,7 @@ const purchaserDepartmentAliases = {
   'College of Gen Studies': 'College of General Studies',
   'CSSD': 'Computing Services & Systems Development',
   'Dental Medicine': 'School of Dental Medicine',
+  'Division of Philanthropic and Alumni Engagement': 'V C Institutional Advancement',
   'Education': 'School of Education',
   'Educ-Univ Service Programs': 'Education-University Service Programs',
   'Executive Vice Chancellor': 'Chancellor',
@@ -76,6 +77,7 @@ const purchaserDepartmentAliases = {
   'Research Conduct and Compliance': 'Sr V C Research',
   'School of Health & Rehabilition Sciences': 'School of Health & Rehabilitation Sciences',
   'School of Information Sciences': 'School of Computing and Information',
+  'Secretary': 'Secretary of the Board of Trustees',
   'Secretary of the Univ': 'Secretary of the Board of Trustees',
   'Senior Vice Chancellor and Provost': 'Sr V C and Provost',
   'Senior Vice Chancellor, Business and Operations': 'Business Operations',
@@ -92,6 +94,7 @@ const purchaserDepartmentAliases = {
   'University of Pittsburgh Cancer Institute': 'UPMC Hillman Cancer Center',
   'VC Institut Advancement': 'V C Institutional Advancement',
   'Vice Chancellor, Human Resources': 'V C Human Resources',
+  'VC Human Resources': 'V C Human Resources',
   'Vice Chancellor, Institutional Advancement': 'V C Institutional Advancement',
   'WPIC': 'Western Psychiatric Institute and Clinic'
 };
@@ -115,7 +118,7 @@ const purchaseTypes = {
 
 module.exports = {
   dataColumns: ['year', 'amount', 'vendor_number', 'vendor_name', 'vendor_address', 'purchaser_department', 'type'],
-  dataYears: [2014, 2015, 2016, 2017, 2018],
+  dataYears: [2014, 2015, 2016, 2017, 2018, 2019],
   purchaserDepartments,
   purchaserDepartmentAliases,
   purchaseTypes

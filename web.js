@@ -63,7 +63,7 @@ app.get('/', (req, res) => {
     return vendorsByNumber[vendorNumber][0];
   });
 
-  var years = [2014, 2015, 2016, 2017, 2018];
+  var years = dataYears;
   if (req.query.years) {
     years = req.query.years.map(Number).sort();
   }
@@ -72,9 +72,10 @@ app.get('/', (req, res) => {
   var currentMaxTransactionsIndex = applicableTransactions.length;
 
   if (Object.keys(req.query).length === 0) {
-    years = [2018];
+    const latestYear = dataYears[dataYears.length - 1];
+    years = [latestYear];
     currentMaxTransactionsIndex = 30;
-    applicableTransactions = applicableTransactions.filter((t) => t.year === 2018).sort((a, b) => b.amount - a.amount);
+    applicableTransactions = applicableTransactions.filter((t) => t.year === latestYear).sort((a, b) => b.amount - a.amount);
   } else if (applicableTransactions.length > 500) {
     currentMaxTransactionsIndex = 30;
   }
