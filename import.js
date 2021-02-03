@@ -15,7 +15,7 @@ dataYears.forEach((dataYear, i) => {
   parse(readFileSync(`data/FY${dataYear.toString().slice(-2)}_contracts.csv`)).then((transactions) => {
     // Remove headers and footers
     transactions.shift();
-    if ([2014, 2017, 2018].includes(dataYear)) { transactions.pop(); }
+    if ([2014, 2017, 2018, 2020].includes(dataYear)) { transactions.pop(); }
     if ([2017, 2018].includes(dataYear)) { transactions.pop(); }
 
     transactions.forEach((transaction, i2) => {

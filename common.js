@@ -3,6 +3,7 @@ const purchaserDepartments = [
   'Bradford Campus',
   'Business Affairs',
   'Business Operations',
+  'Business and Auxiliary Services',
   'Chancellor',
   'Chief Financial Officer',
   'College of General Studies',
@@ -20,6 +21,8 @@ const purchaserDepartments = [
   'Learning Research & Development Center',
   'Libraries',
   'Office of University Counsel',
+  'Planning, Design and Real Estate',
+  'Public Safety and Emergency Management',
   'School of Computing and Information',
   'School of Dental Medicine',
   'School of Education',
@@ -36,6 +39,7 @@ const purchaserDepartments = [
   'Sr V C Health Sciences',
   'Sr V C Research',
   'Student Affairs',
+  'SVC Engagement',
   'Swanson School of Engineering',
   'Titusville Campus',
   'University Center for International Studies',
@@ -96,7 +100,15 @@ const purchaserDepartmentAliases = {
   'Vice Chancellor, Human Resources': 'V C Human Resources',
   'VC Human Resources': 'V C Human Resources',
   'Vice Chancellor, Institutional Advancement': 'V C Institutional Advancement',
-  'WPIC': 'Western Psychiatric Institute and Clinic'
+  'WPIC': 'Western Psychiatric Institute and Clinic',
+  'Pitt Information Technology': 'Computing Services & Systems Development',
+  'SVC Research': 'Sr V C Research',
+  'SVC and Chief Financial Officer': 'Chief Financial Officer',
+  'SVC and Provost': 'Sr V C and Provost',
+  'SVC Philanthropic and Alumni Engagement': 'V C Institutional Advancement',
+  'Human Resources': 'V C Human Resources',
+  'SOMD Administration': 'School of Medicine Division Administration',
+  'SVC Business and Operations': 'Sr V C Business and Operations'
 };
 
 const purchaseTypes = {
@@ -118,7 +130,7 @@ const purchaseTypes = {
 
 module.exports = {
   dataColumns: ['year', 'amount', 'vendor_number', 'vendor_name', 'vendor_address', 'purchaser_department', 'type'],
-  dataYears: [2014, 2015, 2016, 2017, 2018, 2019],
+  dataYears: [2014, 2015, 2016, 2017, 2018, 2019, 2020],
   purchaserDepartments,
   purchaserDepartmentAliases,
   purchaseTypes
