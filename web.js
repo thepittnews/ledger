@@ -48,7 +48,7 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
     applicableTransactions = applicableTransactions.filter((t) => selectValue.includes(t[filterColumn]));
   });
 
-  return applicableTransactions;
+  return applicableTransactions.sort((a, b) => b.amount - a.amount);
 };
 
 app.get('/', (req, res) => {
@@ -71,7 +71,6 @@ app.get('/', (req, res) => {
     const latestYear = dataYears[dataYears.length - 1];
     years = [latestYear];
     currentMaxTransactionsIndex = 30;
-    applicableTransactions = applicableTransactions.filter((t) => t.year === latestYear).sort((a, b) => b.amount - a.amount);
   } else if (applicableTransactions.length > 500) {
     currentMaxTransactionsIndex = 30;
   }
