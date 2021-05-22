@@ -46,7 +46,7 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
   .forEach((filterColumn) => {
     const selectValue = query[`${filterColumn}s`].map((sv) => { return getColumnValue(filterColumn, sv); });
     applicableTransactions = applicableTransactions.filter((t) => {
-      return selectValue.includes(getColumnValue(filterColumn, t[filterColumn]));
+      return selectValue.includes(t[filterColumn]);
     });
   });
 
