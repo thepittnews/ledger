@@ -5,6 +5,7 @@ const express = require('express');
 const app = express();
 
 const { dataColumns, dataYears, purchaserDepartments, purchaseTypes } = require('./common');
+const excludedSearchColumns = ['vendor_address'];
 const numberColumns = ['year', 'amount', 'vendor_number'];
 const getColumnValue = (column, rawValue) => numberColumns.includes(column) ? Number(rawValue) : rawValue;
 
@@ -13,6 +14,7 @@ parse(readFileSync('data/db.csv')).then((parsedTransactions) => {
   parsedTransactions.shift();
   transactions = parsedTransactions.map((data) => {
     return data.reduce((acc, value, i) => {
+      if (excludedSearchColumns.includes(dataColumns[i])) return acc;
       acc[dataColumns[i]] = getColumnValue(dataColumns[i], value);
       return acc;
     }, {});
