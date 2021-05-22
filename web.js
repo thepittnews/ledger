@@ -44,10 +44,8 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
     return !queryParametersToIgnore.includes(`${filterColumn}s`) && query[`${filterColumn}s`];
   })
   .forEach((filterColumn) => {
-    const selectValue = query[`${filterColumn}s`].map((sv) => { return getColumnValue(filterColumn, sv); });
-    applicableTransactions = applicableTransactions.filter((t) => {
-      return selectValue.includes(t[filterColumn]);
-    });
+    const selectValue = query[`${filterColumn}s`].map((sv) => getColumnValue(filterColumn, sv));
+    applicableTransactions = applicableTransactions.filter((t) => selectValue.includes(t[filterColumn]));
   });
 
   return applicableTransactions;
@@ -59,9 +57,7 @@ app.get('/', (req, res) => {
     (acc[x.vendor_number] = acc[x.vendor_number] || []).push(x);
     return acc;
   }, {});
-  const vendors = Object.keys(vendorsByNumber).map((vendorNumber) => {
-    return vendorsByNumber[vendorNumber][0];
-  });
+  const vendors = Object.keys(vendorsByNumber).map((number) => vendorsByNumber[number][0]);
 
   var years = dataYears;
   if (req.query.years) {
