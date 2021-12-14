@@ -136,7 +136,7 @@
           </thead>
           <tbody>
             <% var transactionsForFirstLoad = transactions.slice(0, currentMaxTransactionsIndex) %>
-            <% for (var transaction of transactionsForFirstLoad) { %>
+            <% for (var transaction of transactions) { %>
               <tr class="transaction">
                 <td scope="row"><%= transaction.year %></td>
                 <td><%= transaction.vendor_name %></td>
@@ -186,7 +186,7 @@
             <div class="form-group">
               <label>Purchaser</label><br>
               <select id="purchaser_departments-select" multiple>
-                <% for (var purchaserDepartment of purchaserDepartments) { %>
+                <% for (var purchaserDepartment of Object.values(purchaserDepartments)) { %>
                   <option value="<%= purchaserDepartment %>"><%= purchaserDepartment %></option>
                 <% } %>
               </select>

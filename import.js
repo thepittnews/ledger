@@ -5,7 +5,6 @@ const {
   dataColumns,
   dataYears,
   purchaserDepartments,
-  purchaserDepartmentAliases,
   purchaseTypes
 } = require('./common');
 
@@ -26,13 +25,7 @@ dataYears.forEach((dataYear, i) => {
         console.log(transaction[2]);
       }
 
-      var purchaserDepartment = undefined;
-      const rawPurchaserDepartment = transaction[1].trim();
-      if (purchaserDepartments.includes(rawPurchaserDepartment)) {
-        purchaserDepartment = rawPurchaserDepartment;
-      } else if (Object.keys(purchaserDepartmentAliases).includes(rawPurchaserDepartment)) {
-        purchaserDepartment = purchaserDepartmentAliases[rawPurchaserDepartment];
-      }
+      const purchaserDepartment = purchaserDepartments[Number(transaction[0])];
       if (purchaserDepartment === undefined) {
         console.log(transaction[1]);
       }
