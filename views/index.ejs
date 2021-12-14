@@ -136,7 +136,7 @@
           </thead>
           <tbody>
             <% var transactionsForFirstLoad = transactions.slice(0, currentMaxTransactionsIndex) %>
-            <% for (var transaction of transactions) { %>
+            <% for (var transaction of transactionsForFirstLoad) { %>
               <tr class="transaction">
                 <td scope="row"><%= transaction.year %></td>
                 <td><%= transaction.vendor_name %></td>
