@@ -54,6 +54,11 @@ const getApplicableTransactions = (query, queryParametersToIgnore = []) => {
 };
 
 app.get('/', (req, res) => {
+  var emptyQuery = Object.keys(req.query).length === 0;
+  if (emptyQuery) {
+    req.query.years = [dataYears[dataYears.length - 1]];
+  }
+
   const vendorsByNumber = getApplicableTransactions(req.query, ['vendor_numbers'])
   .reduce((acc, x) => {
     (acc[x.vendor_number] = acc[x.vendor_number] || []).push(x);
@@ -69,11 +74,7 @@ app.get('/', (req, res) => {
   var applicableTransactions = getApplicableTransactions(req.query);
   var currentMaxTransactionsIndex = applicableTransactions.length;
 
-  if (Object.keys(req.query).length === 0) {
-    const latestYear = dataYears[dataYears.length - 1];
-    years = [latestYear];
-    currentMaxTransactionsIndex = 30;
-  } else if (applicableTransactions.length > 500) {
+  if (emptyQuery || applicableTransactions.length > 500) {
     currentMaxTransactionsIndex = 30;
   }
 
