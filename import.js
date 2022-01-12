@@ -14,7 +14,7 @@ dataYears.forEach((dataYear, i) => {
   parse(readFileSync(`data/FY${dataYear.toString().slice(-2)}_contracts.csv`)).then((transactions) => {
     // Remove headers and footers
     transactions.shift();
-    if ([2014, 2017, 2018, 2020].includes(dataYear)) { transactions.pop(); }
+    if ([2014, 2017, 2018, 2020, 2021].includes(dataYear)) { transactions.pop(); }
     if ([2017, 2018].includes(dataYear)) { transactions.pop(); }
 
     transactions.forEach((transaction, i2) => {
@@ -27,7 +27,11 @@ dataYears.forEach((dataYear, i) => {
 
       const purchaserDepartment = purchaserDepartments[Number(transaction[0])];
       if (purchaserDepartment === undefined) {
-        console.log(transaction[1]);
+        console.log(`Can't find purchaser department: ${transaction[1]}`);
+      }
+
+      if (dataYears.indexOf(dataYear) === dataYears.length - 1 && purchaserDepartment != transaction[1]) {
+        console.log(`Possible rename of purchaser department ${transaction[0]}: ${transaction[1]}`);
       }
 
       processedData.push([
