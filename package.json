@@ -2,6 +2,6 @@
   "dependencies": {
     "csv-parse": "^4.8.2",
     "ejs": "^2.6.1",
-    "express": "^4.16.4"
+    "express": "^4.17.3"
   }
 }
